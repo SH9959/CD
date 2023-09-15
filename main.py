@@ -2,7 +2,8 @@ from CD_methods import CD
 import numpy as np
 import debugpy
 import os
-
+import logging
+import Utils
 datasets = [f'./datasets/dataset_{i}/alarm.csv' for i in range(1, 5)]
 pri = [f'./datasets/dataset_{i}/causal_prior.npy' for i in range(1, 5)]
 rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
@@ -16,19 +17,12 @@ def do_SAM():
     SAVE_PATH = [f'./SAM_submission/bin_form/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
     SAVE_PATH_w = [f'./SAM_submission/weighted_form/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
     k = -1
-
+    
     for path in SAVE_PATH:
-        directory = os.path.dirname(path)
-        if not os.path.exists(directory):
-            print("NotExist,Try to build a newone...")
-            os.makedirs(directory)
-            print("Built successfully")
+        Utils.check_path(path)
+
     for path in SAVE_PATH_w:
-        directory = os.path.dirname(path)
-        if not os.path.exists(directory):
-            print("NotExist,Try to build a newone...")
-            os.makedirs(directory)
-            print("Built successfully")
+        Utils.check_path()
 
     for data_path in datasets:
         k += 1  
@@ -47,11 +41,7 @@ def do_NotearsNonlinear():  # 一直跑不出来
     SAVE_PATH = [f'./NotearsNonlinear_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
     for path in SAVE_PATH:
-        directory = os.path.dirname(path)
-        if not os.path.exists(directory):
-            print("NotExist,Try to build a newone...")
-            os.makedirs(directory)
-            print("Built successfully")
+        Utils.check_path(path)
 
     k = -1
     for data_path in datasets:
@@ -67,11 +57,7 @@ def do_TTPM():
     SAVE_PATH = [f'./TTPM100_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
     for path in SAVE_PATH:
-        directory = os.path.dirname(path)
-        if not os.path.exists(directory):
-            print("NotExist,Try to build a newone...")
-            os.makedirs(directory)
-            print("Built successfully")
+        Utils.check_path(path)
 
     k = -1
     for data_path in datasets:
@@ -84,14 +70,10 @@ def do_TTPM():
 
 def do_PTHP():
     
-    SAVE_PATH = [f'./PTHP80_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
+    SAVE_PATH = [f'./PTHP15_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
     for path in SAVE_PATH:
-        directory = os.path.dirname(path)
-        if not os.path.exists(directory):
-            print("NotExist,Try to build a newone...")
-            os.makedirs(directory)
-            print("Built successfully")
+        Utils.check_path(path)
 
     k = -1
     for data_path in datasets:
@@ -103,6 +85,67 @@ def do_PTHP():
         print(f"----------------------------------------------dataset{k+1}--OK---------------PTHP----------------------------")
 
 
+def do_PTHP_single(d:str, p:str, r:str, t:str, para:dict, s:str):  # 处理单个数据集
+
+# 输出进程信息
+    n = Utils.get_task_id(d)
+    
+    logging.info(f"dataset_{n} Processing {d} in process {os.getpid()}")
+            # 创建一个独立的日志文件，每个进程使用不同的文件名
+    log_file = f'dataset_{n}_pid{os.getpid()}.log'
+    log_formatter = logging.Formatter('%(asctime)s - %(processName)s - %(message)s')
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(log_formatter)
+    # 获取当前进程的日志记录器并添加处理程序
+    local_logger = logging.getLogger()
+    local_logger.addHandler(handler)
+
+    # 输出进程信息
+    local_logger.info(f"dataset_{n}-Processing_{d} in process {os.getpid()}")
+    local_logger.info(f"initial parameter of PTHP{para}")
+
+    cd = CD(origin_data_path=d, prior_imformation_path=p, rca_prior_path=r, topology_path=t, pthp_para=para)
+    est_matrix = cd.PTHP()
+    np.save(s, est_matrix)
+    return est_matrix
+
+def do_PTHP_MultiProcesses():  # 多进程
+    from multiprocessing import Pool
+    # 配置全局日志
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(processName)s - %(message)s')
+
+    # pthp的参数
+    para = {
+        'delta':0.05, 
+        'max_hop':2, 
+        'penalty':'AIC', 
+        'max_iter':100, 
+        'epsilon':1
+    }
+
+
+        # 创建进程池
+
+    """
+    datasets = [f'./datasets/dataset_{i}/alarm.csv' for i in range(1, 5)]
+    pri = [f'./datasets/dataset_{i}/causal_prior.npy' for i in range(1, 5)]
+    rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
+    topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
+    rca.append(None)
+    topo.append(None)
+    """
+    result_paths = [f'./PTHPs_results/PTHP_{para["max_iter"]}_Final_results/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
+    for path in result_paths:
+        Utils.check_path(path)
+        
+    max_processes = 4  # 根据需要调整进程数
+
+    with Pool(max_processes) as pool:
+        pool.starmap(do_PTHP_single, zip(datasets, pri, rca, topo, [para] * 4, result_paths))
+
+    print("All datasets processed.")
+
+
 if __name__ == "__main__":
     # debugpy.connect(('192.168.1.50', 6789)) # 与跳板机链接，"192.168.1.50"是hpc跳板机内网IP，6789是跳板机接收调试信息的端口
     # debugpy.wait_for_client() # 等待跳板机的相应
@@ -110,4 +153,5 @@ if __name__ == "__main__":
 
     #do_SAM()
     #do_NotearsNonlinear()
-    do_PTHP()
+    #do_PTHP()
+    do_PTHP_MultiProcesses()

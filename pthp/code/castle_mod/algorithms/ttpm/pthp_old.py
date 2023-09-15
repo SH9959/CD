@@ -21,12 +21,11 @@ from itertools import product
 
 from trustworthyAI.gcastle.castle.common import BaseLearner
 
-import Utils
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
-class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保存数据集，具体更改在79,96,248行
+class PTHP(BaseLearner):
     """
     PTHP Algorithm.
 
@@ -77,7 +76,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
     """
 
     def __init__(self, topology_matrix, prior_matrix, delta=0.1, epsilon=1,
-                 max_hop=0, penalty='BIC', max_iter=20, dataname=0):
+                 max_hop=0, penalty='BIC', max_iter=20):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
             'topology_matrix should be np.matrix object'
@@ -94,7 +93,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._epsilon = epsilon
         self._max_iter = max_iter
         self._prior_matrix = prior_matrix
-        self.dataname = dataname
+
     def learn(self, tensor, *args, **kwargs):
         """
         Set up and run the TTPM algorithm.
@@ -241,15 +240,9 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         l_ret = result[0]
         
         for num_iter in range(self._max_iter):
-            
+
             logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
-            if num_iter % 2 == 0 and num_iter != 0:
-                # 每2代保存一下
-                logging.info(f'edge_mat:{edge_mat}\nresult:{result}')
-                pa = f"~/cdt/PTHPs_results/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
-                Utils.check_path(pa)
-                np.save(pa, edge_mat)
-                logging.info(f"iter[{num_iter}]:saved--------")
+
             stop_tag = True
             for new_edge_mat in list(
                     self._one_step_change_iterator(edge_mat)):
@@ -437,7 +430,6 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         new_edge_mat: np.ndarray
             new value of edge
         """
-        # logging.info(f"j,i:{e}--")
         j, i = e
         if j == i:
             return edge_mat

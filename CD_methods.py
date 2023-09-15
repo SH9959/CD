@@ -8,12 +8,26 @@ import time
 class CD():
 
     def __init__(self,origin_data_path = None,prior_imformation_path = None,topology_path = None,rca_prior_path = None,
-                 origin_data = None,prior_imformation = None,topology = None,rca_prior = None
+                 origin_data = None,prior_imformation = None,topology = None,rca_prior = None, pthp_para = {'delta':0.01, 'max_hop':2, 'penalty':'BIC', 'max_iter':5, 'epsilon':1}
                  ) -> None:
         self.prior_imformation_path = prior_imformation_path
         self.origin_data_path = origin_data_path
         self.topology_path = topology_path
         self.rca_prior_path = rca_prior_path      
+        self.pthp_para = pthp_para
+        import re
+        string = origin_data_path
+        match = re.search(r'dataset_(\d+)', string)
+        # 检查是否匹配到字符串
+        if match:
+            # 提取匹配到的数字部分并转换为整数
+            number = int(match.group(1))
+            print(number)  # 输出：1
+        else:
+            print("No match found in the string.")
+
+        self.num = number  # 当前数据集名字（或者说编号）
+
 
         if self.origin_data_path is not None:
             self.origin_data = pd.read_csv(self.origin_data_path)
@@ -35,6 +49,7 @@ class CD():
             self.rca_prior = pd.read_csv(self.rca_prior_path)
         else:
             self.rca_prior = None
+            self.pthp_para['max_hop'] = 1
 
     def origin_data_to_X(self, ):
         """
@@ -311,7 +326,7 @@ class CD():
         # from pthp.code.castle_mod.algorithms import PTHP
         from trustworthyAI.gcastle.castle.common.priori_knowledge import PrioriKnowledge
         """
-        PC方法需要git clone trustworthyAI库,记得改绝对路径,
+        方法需要git clone trustworthyAI库,记得改绝对路径,
         dataset1: (2017,39) 8s
         dataset2: (2016,49) 37s
         dataset3: (2017,31) 3s
@@ -360,13 +375,14 @@ class CD():
         # for i, j in zip(*np.where(causal_prior == 0)):
         #     prior_knowledge.add_forbidden_edge(i, j)
 
-        ttpm = PTHP(topology_matrix=self.topology,prior_matrix = causal_prior , delta=0.01, max_hop=2, penalty='BIC', max_iter=80, epsilon=1)
+
+        pthp = PTHP(topology_matrix=self.topology,prior_matrix = causal_prior , delta=self.pthp_para['delta'], max_hop=self.pthp_para['max_hop'], penalty=self.pthp_para['penalty'], max_iter=self.pthp_para['max_iter'], epsilon=self.pthp_para['epsilon'], dataname=self.num)
         #  参数设置参照往年冠军设置
         print("debug here1")
         print("learning...")
-        ttpm.learn(samples)
+        pthp.learn(samples)
         print("ok")
-        graph_matrix = np.array(ttpm.causal_matrix)
+        graph_matrix = np.array(pthp.causal_matrix)
 
         np.fill_diagonal(graph_matrix , 0)  # 非循环
 
