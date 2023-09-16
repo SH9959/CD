@@ -43,7 +43,7 @@ class CD():
             self.topology = np.load(self.topology_path)
 
         else:
-            self.topology = None
+            self.topology = np.zeros(shape=(max(self.origin_data["device_id"].values)+1, max(self.origin_data["device_id"].values)+1))
 
         if self.rca_prior_path is not None:
             self.rca_prior = pd.read_csv(self.rca_prior_path)
@@ -363,9 +363,6 @@ class CD():
             alarm_data = alarm_data.iloc[ : count,: ]
 
         samples = alarm_data
-
-        if (self.topology == None).all():
-            self.topology = np.zeros(shape=(max(alarm_data["node"].values)+1, max(alarm_data["node"].values)+1))
 
         # create the prior knowledge object for the PC algorithm 
         # prior_knowledge = PrioriKnowledge(causal_prior.shape[0])

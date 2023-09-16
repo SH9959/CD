@@ -245,8 +245,8 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
             logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
             if num_iter % 2 == 0 and num_iter != 0:
                 # 每2代保存一下
-                logging.info(f'edge_mat:{edge_mat}\nresult:{result}')
-                pa = f"~/cdt/PTHPs_results/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                logging.info(f'edge_mat:{edge_mat}')
+                pa = f"./PTHPs_results/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
                 Utils.check_path(pa)
                 np.save(pa, edge_mat)
                 logging.info(f"iter[{num_iter}]:saved--------")

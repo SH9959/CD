@@ -116,7 +116,7 @@ def do_PTHP_MultiProcesses():  # 多进程
 
     # pthp的参数
     para = {
-        'delta':0.05, 
+        'delta':0.01, 
         'max_hop':2, 
         'penalty':'AIC', 
         'max_iter':100, 
@@ -145,6 +145,36 @@ def do_PTHP_MultiProcesses():  # 多进程
 
     print("All datasets processed.")
 
+def do_one_PTHP(task:int):
+   # task = 2
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(processName)s - %(message)s')
+
+    # pthp的参数
+    para = {
+        'delta':0.01, 
+        'max_hop':2, 
+        'penalty':'AIC', 
+        'max_iter':100, 
+        'epsilon':1
+    }
+
+
+
+    """
+    datasets = [f'./datasets/dataset_{i}/alarm.csv' for i in range(1, 5)]
+    pri = [f'./datasets/dataset_{i}/causal_prior.npy' for i in range(1, 5)]
+    rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
+    topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
+    rca.append(None)
+    topo.append(None)
+    """
+
+    result_paths = [f'./PTHPs_results_single/PTHP_{para["max_iter"]}_Final_results/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
+    for path in result_paths:
+        Utils.check_path(path)
+    do_PTHP_single(d=datasets[task], p=pri[task], r=rca[task], t=topo[task], para=para, s=result_paths[task])
+
+
 
 if __name__ == "__main__":
     # debugpy.connect(('192.168.1.50', 6789)) # 与跳板机链接，"192.168.1.50"是hpc跳板机内网IP，6789是跳板机接收调试信息的端口
@@ -154,4 +184,5 @@ if __name__ == "__main__":
     #do_SAM()
     #do_NotearsNonlinear()
     #do_PTHP()
-    do_PTHP_MultiProcesses()
+    # do_PTHP_MultiProcesses()
+    do_one_PTHP(3)
