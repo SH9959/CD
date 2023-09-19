@@ -76,7 +76,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
     >>> ret_metrix.metrics
     """
 
-    def __init__(self, topology_matrix, prior_matrix, delta=0.1, epsilon=1,
+    def __init__(self, topology_matrix, prior_matrix, PC_result_matrix = None,delta=0.1, epsilon=1,
                  max_hop=0, penalty='BIC', max_iter=20, dataname=0):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
@@ -95,6 +95,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._max_iter = max_iter
         self._prior_matrix = prior_matrix
         self.dataname = dataname
+        self._PC_result_matrix = PC_result_matrix  # 添加PC_result
     def learn(self, tensor, *args, **kwargs):
         """
         Set up and run the TTPM algorithm.
@@ -246,7 +247,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
             if num_iter % 2 == 0 and num_iter != 0:
                 # 每2代保存一下
                 logging.info(f'edge_mat:{edge_mat}')
-                pa = f"./PTHPs_results/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
                 Utils.check_path(pa)
                 np.save(pa, edge_mat)
                 logging.info(f"iter[{num_iter}]:saved--------")
@@ -418,7 +419,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
 
     def check_prior(self):
         return [(i, j) for i, j in product(range(len(self._event_names)),
-                           range(len(self._event_names))) if self._prior_matrix[i][j] == -1]
+                           range(len(self._event_names))) if self._prior_matrix[i][j] == -1 and self._PC_result_matrix[i][j] == 1]
 
 
     @staticmethod

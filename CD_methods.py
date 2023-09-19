@@ -8,13 +8,14 @@ import time
 class CD():
 
     def __init__(self,origin_data_path = None,prior_imformation_path = None,topology_path = None,rca_prior_path = None,
-                 origin_data = None,prior_imformation = None,topology = None,rca_prior = None, pthp_para = {'delta':0.01, 'max_hop':2, 'penalty':'BIC', 'max_iter':5, 'epsilon':1}
+                 origin_data = None,prior_imformation = None,topology = None,rca_prior = None,PC_re_path = None, pthp_para = {'delta':0.01, 'max_hop':2, 'penalty':'BIC', 'max_iter':5, 'epsilon':1}
                  ) -> None:
         self.prior_imformation_path = prior_imformation_path
         self.origin_data_path = origin_data_path
         self.topology_path = topology_path
         self.rca_prior_path = rca_prior_path      
         self.pthp_para = pthp_para
+        self.PC_re_path = PC_re_path
         import re
         string = origin_data_path
         match = re.search(r'dataset_(\d+)', string)
@@ -50,6 +51,11 @@ class CD():
         else:
             self.rca_prior = None
             self.pthp_para['max_hop'] = 1
+
+        if self.PC_re_path is not None:
+            self.PC_matrix = np.load(self.PC_re_path)
+        else:
+            self.PC_matrix = np.ones_like(self.prior_imformation)
 
     def origin_data_to_X(self, ):
         """
@@ -317,9 +323,6 @@ class CD():
 
         pass
 
-    def THP(self, ):
-
-        pass
     def PTHP(self, ):
         from pthp.code.castle_mod.algorithms import PTHP
 
@@ -373,7 +376,7 @@ class CD():
         #     prior_knowledge.add_forbidden_edge(i, j)
 
 
-        pthp = PTHP(topology_matrix=self.topology,prior_matrix = causal_prior , delta=self.pthp_para['delta'], max_hop=self.pthp_para['max_hop'], penalty=self.pthp_para['penalty'], max_iter=self.pthp_para['max_iter'], epsilon=self.pthp_para['epsilon'], dataname=self.num)
+        pthp = PTHP(topology_matrix=self.topology,prior_matrix = causal_prior ,PC_result_matrix=self.PC_matrix, delta=self.pthp_para['delta'], max_hop=self.pthp_para['max_hop'], penalty=self.pthp_para['penalty'], max_iter=self.pthp_para['max_iter'], epsilon=self.pthp_para['epsilon'], dataname=self.num)
         #  参数设置参照往年冠军设置
         print("debug here1")
         print("learning...")
