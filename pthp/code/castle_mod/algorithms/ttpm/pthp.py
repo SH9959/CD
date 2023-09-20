@@ -17,8 +17,10 @@ import logging
 import pandas as pd
 import numpy as np
 import networkx as nx
+import copy
 from itertools import product
-
+import concurrent.futures
+import os
 from trustworthyAI.gcastle.castle.common import BaseLearner
 
 import Utils
@@ -77,7 +79,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
     """
 
     def __init__(self, topology_matrix, prior_matrix, PC_result_matrix = None,delta=0.1, epsilon=1,
-                 max_hop=0, penalty='BIC', max_iter=20, dataname=0):
+                 max_hop=0, penalty='BIC', max_iter=20, dataname=0, save_dir_path = "./_PTHP_results"):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
             'topology_matrix should be np.matrix object'
@@ -96,6 +98,9 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._prior_matrix = prior_matrix
         self.dataname = dataname
         self._PC_result_matrix = PC_result_matrix  # 添加PC_result
+        if PC_result_matrix is None:
+            self._PC_result_matrix = np.ones_like(self._prior_matrix)
+        self._save_dir_path = save_dir_path
     def learn(self, tensor, *args, **kwargs):
         """
         Set up and run the TTPM algorithm.
@@ -129,7 +134,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._start_init(tensor)
 
         # Generate causal matrix (DAG)
-        _, raw_causal_matrix = self._hill_climb()
+        _, raw_causal_matrix = self._hill_climb_boost()
         self._causal_matrix = pd.DataFrame(raw_causal_matrix,
                                            index=self._matrix_names,
                                            columns=self._matrix_names)
@@ -208,7 +213,86 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         return np.array(list(map(lambda event_name:
                                  np.where(base_event_names == event_name)[0][0],
                                  event_names)))
+    # 定义一个函数来执行单个 EM 计算任务
+    def calculate_em_task(self, new_edge_mat):
+        new_result = self._em(new_edge_mat)  # 在这里执行 EM 计算任务
+        return [new_result, new_edge_mat]
 
+    def _hill_climb_boost(self):  # 使用并发技术的加速代码
+        """
+        Search the best causal graph, then generate the causal matrix (DAG).
+
+        Returns
+        -------
+        result: tuple, (likelihood, alpha matrix, events vector)
+            likelihood: used as the score criteria for searching the
+                causal structure.
+            alpha matrix: the intensity of causal effect from event v’ to v.
+            events vector: the exogenous base intensity of each event.
+        edge_mat: np.ndarray
+            Causal matrix.
+        """
+        self._get_effect_tensor_decays()
+        # Initialize the adjacency matrix
+        edge_mat = ((self._prior_matrix.copy() == 1) + np.eye(self._N, self._N)).astype(int)
+        # input(edge_mat)
+        # edge_mat = np.load("D:/Study/code/python_study/python_/PCIC/phase2/testing/1_notopo_5000_0.01_1.npy")
+        # np.fill_diagonal(edge_mat, 1)
+        # edge_mat[22][13] = 0
+        # edge_mat[13][9] = 1
+        # edge_mat[11][1] = 1
+        # edge_mat[10][4] = 1
+        # edge_mat[8][10] = 1
+        # edge_mat[8][7] = 1
+        # edge_mat[7][10] = 0
+        # edge_mat[2][4] = 1
+        # edge_mat[16][9] = 1
+        result = self._em(edge_mat)
+        l_ret = result[0]
+        # 创建锁对象用于线程同步
+        num_threads = 80  # 假设使用 4 个线程
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+            for num_iter in range(self._max_iter):
+                
+                logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
+                if num_iter % 2 == 0 and num_iter != 0:
+                    # 每2代保存一下
+                    # logging.info(f'edge_mat:{edge_mat}')
+                    pa = os.path.join(self.save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
+                    #pa = f"{self.save_dir_path}/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                    Utils.check_path(pa)
+                    tmp_mat = copy.deepcopy(edge_mat)
+                    tmp_mat = Utils.filter(tmp_mat)
+                    logging.info(f'tmp_edge_mat:{tmp_mat}')
+                    np.save(pa, tmp_mat)
+                    logging.info(f"iter[{num_iter}]:saved-----------in---------------{self._save_dir_path}------------------")
+                # stop_tag = True
+                neighbors = list(self._one_step_change_iterator(edge_mat))
+                task_results = executor.map(self.calculate_em_task, neighbors)
+                        # 等待所有任务完成
+                concurrent.futures.wait(neighbors)
+                # 等待所有任务完成并获取结果
+                results = list(task_results)
+
+                # 选择最优的结果
+                best_result = max(results, key=lambda result: result[0][0])
+
+                # 获取最优的似然分数和图
+                new_result = best_result[0]
+                new_edge_mat = best_result[0][1]
+
+                if new_result[0] <= l_ret:
+                #    stop_tag = True
+                    break
+                else:
+                    edge_mat = new_edge_mat
+                    result = new_result
+
+                # if stop_tag:
+                #     break
+
+        return result, edge_mat
+    
     def _hill_climb(self):
         """
         Search the best causal graph, then generate the causal matrix (DAG).
@@ -246,11 +330,15 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
             logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
             if num_iter % 2 == 0 and num_iter != 0:
                 # 每2代保存一下
-                logging.info(f'edge_mat:{edge_mat}')
-                pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
-                Utils.check_path(pa)
-                np.save(pa, edge_mat)
-                logging.info(f"iter[{num_iter}]:saved--------")
+
+                pa = os.path.join(self.save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
+                #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                tmp_mat = copy.deepcopy(edge_mat)
+                tmp_mat = Utils.filter(tmp_mat)
+                logging.info(f'tmp_edge_mat:{tmp_mat}')
+                np.save(pa, tmp_mat)
+                #logging.info(f"iter[{num_iter}]:saved--------")
+                logging.info(f"iter[{num_iter}]:saved-----------in---------------{self._save_dir_path}------------------")
             stop_tag = True
             for new_edge_mat in list(
                     self._one_step_change_iterator(edge_mat)):
