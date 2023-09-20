@@ -3,6 +3,7 @@ import numpy as np
 import debugpy
 import os
 import logging
+from datetime import datetime
 import Utils
 datasets = [f'./datasets/dataset_{i}/alarm.csv' for i in range(1, 5)]
 pri = [f'./datasets/dataset_{i}/causal_prior.npy' for i in range(1, 5)]
@@ -83,32 +84,6 @@ def do_PTHP():
         np.save(SAVE_PATH[k], est_matrix)
         print(f"Saved sucessfully in {SAVE_PATH[k]}!")
         print(f"----------------------------------------------dataset{k+1}--OK---------------PTHP----------------------------")
-
-
-def do_PTHP_single(d:str, p:str, r:str, t:str, para:dict, s:str, pc:str):  # 处理单个数据集
-
-# 输出进程信息
-    n = Utils.get_task_id(d)
-    
-    logging.info(f"dataset_{n} Processing {d} in process {os.getpid()}")
-            # 创建一个独立的日志文件，每个进程使用不同的文件名
-    log_file = f'dataset_{n}_pid{os.getpid()}.log'
-    log_formatter = logging.Formatter('%(asctime)s - %(processName)s - %(message)s')
-    handler = logging.FileHandler(log_file)
-    handler.setFormatter(log_formatter)
-    # 获取当前进程的日志记录器并添加处理程序
-    local_logger = logging.getLogger()
-    local_logger.addHandler(handler)
-
-    # 输出进程信息
-    local_logger.info(f"WITH_PC_dataset_{n}-Processing_{d} in process {os.getpid()}")
-    local_logger.info(f"initial parameter of PTHP{para}")
-
-    cd = CD(origin_data_path=d, prior_imformation_path=p, rca_prior_path=r, topology_path=t, pthp_para=para, PC_re_path=pc)
-    est_matrix = cd.PTHP()
-    np.save(s, est_matrix)
-    return est_matrix
-
 def do_PTHP_MultiProcesses():  # 多进程
     from multiprocessing import Pool
     # 配置全局日志
@@ -145,6 +120,44 @@ def do_PTHP_MultiProcesses():  # 多进程
 
     print("All datasets processed.")
 
+
+def do_PTHP_single(d:str, p:str, r:str, t:str, para:dict, pc:str, savedir:str):  # 处理单个数据集,传入路径
+
+# 输出进程信息
+    n = Utils.get_task_id(d)
+    
+    logging.info(f"dataset_{n} Processing {d} in process {os.getpid()}")
+
+            # 创建一个独立的日志文件，每个进程使用不同的文件名
+                # 获取当前日期和时间
+    current_datetime = datetime.now()
+
+    # 将日期和时间格式化为字符串，精确到分钟
+    now = current_datetime.strftime("%Y_%m_%d_%H_%M")
+
+    log_file = f'dataset_{n}_pid{os.getpid()}_at_{now}.log'
+    log_formatter = logging.Formatter('%(asctime)s - %(processName)s - %(message)s')
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(log_formatter)
+    # 获取当前进程的日志记录器并添加处理程序
+    local_logger = logging.getLogger()
+    local_logger.addHandler(handler)
+
+    # 输出进程信息
+    local_logger.info(f"dataset_{n}-Processing_{d} in process {os.getpid()}")
+    local_logger.info(f"initial parameter of PTHP{para}")
+    logging.info(f"SAVE_DIRECTORY is in {savedir}")
+    logging.info(f"prior_file_path:{p}")
+    logging.info(f"rca_file_path:{r}")
+    logging.info(f"topology_file_path:{t}")
+    logging.info(f"limited_prior_file_path:{pc}")
+    logging.info(f"now:{now}")
+    cd = CD(origin_data_path=d, prior_imformation_path=p, rca_prior_path=r, topology_path=t, pthp_para=para, PC_re_path=pc, savedirpath=savedir)
+    est_matrix = cd.PTHP()
+    #np.save(s, est_matrix)
+    return est_matrix
+
+
 def do_one_PTHP(task:int):
    # task = 2
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(processName)s - %(message)s')
@@ -152,13 +165,14 @@ def do_one_PTHP(task:int):
     # pthp的参数
     para = {
         'delta':0.01, 
-        'max_hop':1, 
+        'max_hop':2, 
         'penalty':'AIC', 
         'max_iter':100, 
         'epsilon':1
     }
 
-
+    save_dir = "./PTHP_920_boost_"
+    Utils.check_path(save_dir)
 
     """
     datasets = [f'./datasets/dataset_{i}/alarm.csv' for i in range(1, 5)]
@@ -169,10 +183,9 @@ def do_one_PTHP(task:int):
     topo.append(None)
     """
 
-    result_paths = [f'./PTHPs_results_with_PC_918/PTHP_{para["max_iter"]}_Final_results/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
-    for path in result_paths:
-        Utils.check_path(path)
-    do_PTHP_single(d=datasets[task], p=pri[task], r=rca[task], t=topo[task], para=para, s=result_paths[task], pc = pc_paths[task])
+    #result_paths = [f'./PTHPs_results_with_PC_918/PTHP_{para["max_iter"]}_Final_results/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
+
+    do_PTHP_single(d=datasets[task], p=pri[task], r=rca[task], t=topo[task], para=para, pc=None, savedir=save_dir)  # , pc = pc_paths[task])
 
 
 
