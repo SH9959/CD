@@ -79,7 +79,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
     """
 
     def __init__(self, topology_matrix, prior_matrix, PC_result_matrix = None,delta=0.1, epsilon=1,
-                 max_hop=0, penalty='BIC', max_iter=20, dataname=0, save_dir_path = "./_PTHP_results"):
+                 max_hop=0, penalty='BIC', max_iter=20, dataname=0, save_dir_path="./_PTHP_results"):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
             'topology_matrix should be np.matrix object'
@@ -134,7 +134,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._start_init(tensor)
 
         # Generate causal matrix (DAG)
-        _, raw_causal_matrix = self._hill_climb_boost()
+        _, raw_causal_matrix = self._hill_climb()
         self._causal_matrix = pd.DataFrame(raw_causal_matrix,
                                            index=self._matrix_names,
                                            columns=self._matrix_names)
@@ -258,7 +258,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
                 if num_iter % 2 == 0 and num_iter != 0:
                     # 每2代保存一下
                     # logging.info(f'edge_mat:{edge_mat}')
-                    pa = os.path.join(self.save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
+                    pa = os.path.join(self._save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
                     #pa = f"{self.save_dir_path}/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
                     Utils.check_path(pa)
                     tmp_mat = copy.deepcopy(edge_mat)
@@ -331,7 +331,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
             if num_iter % 2 == 0 and num_iter != 0:
                 # 每2代保存一下
 
-                pa = os.path.join(self.save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
+                pa = os.path.join(self._save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
                 #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
                 tmp_mat = copy.deepcopy(edge_mat)
                 tmp_mat = Utils.filter(tmp_mat)

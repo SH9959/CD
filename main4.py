@@ -11,7 +11,7 @@ rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
 topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
 rca.append(None)
 topo.append(None)
-pc_paths = [f'./PC_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 4)]
+pc_paths = [f'./SUBMISSIONS/PC_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
 def do_SAM():
 
@@ -171,7 +171,7 @@ def do_one_PTHP(task:int):
         'epsilon':1
     }
 
-    save_dir = "./PTHP_920_boost_"
+    save_dir = "./PC_PTHP_923"
     Utils.check_path(save_dir)
 
     """
@@ -185,7 +185,7 @@ def do_one_PTHP(task:int):
 
     #result_paths = [f'./PTHPs_results_with_PC_918/PTHP_{para["max_iter"]}_Final_results/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
-    do_PTHP_single(d=datasets[task], p=pri[task], r=rca[task], t=topo[task], para=para, pc=None, savedir=save_dir)  # , pc = pc_paths[task])
+    do_PTHP_single(d=datasets[task], p=pri[task], r=rca[task], t=topo[task], para=para, pc=pc_paths[task], savedir=save_dir)  # , pc = pc_paths[task])
 
 
 

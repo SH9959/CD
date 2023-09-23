@@ -11,7 +11,7 @@ rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
 topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
 rca.append(None)
 topo.append(None)
-pc_paths = [f'./PC_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 4)]
+pc_paths = [f'./SUBMISSIONS/PC_submission/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
 
 def do_SAM():
 
