@@ -96,7 +96,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         self._epsilon = epsilon
         self._max_iter = max_iter
         self._prior_matrix = prior_matrix
-        self.dataname = dataname
+        self._dataname = dataname
         self._PC_result_matrix = PC_result_matrix  # 添加PC_result
         if PC_result_matrix is None:
             self._PC_result_matrix = np.ones_like(self._prior_matrix)
@@ -258,11 +258,11 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
                 if num_iter % 2 == 0 and num_iter != 0:
                     # 每2代保存一下
                     # logging.info(f'edge_mat:{edge_mat}')
-                    pa = os.path.join(self._save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
-                    #pa = f"{self.save_dir_path}/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                    pa = os.path.join(self._save_dir_path, f"PTHP_{num_iter}_results", f"dataset_{self._dataname}_graph_matrix.npy")
+                    #pa = f"{self.save_dir_path}/PTHP_{num_iter}_results/dataset_{self._dataname}_graph_matrix.npy"
                     Utils.check_path(pa)
                     tmp_mat = copy.deepcopy(edge_mat)
-                    tmp_mat = Utils.filter(tmp_mat)
+                    tmp_mat = Utils.filter(wait_to_filter_matrix=tmp_mat, prior_matrix=self._prior_matrix)
                     logging.info(f'tmp_edge_mat:{tmp_mat}')
                     np.save(pa, tmp_mat)
                     logging.info(f"iter[{num_iter}]:saved-----------in---------------{self._save_dir_path}------------------")
@@ -331,10 +331,10 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
             if num_iter % 2 == 0 and num_iter != 0:
                 # 每2代保存一下
 
-                pa = os.path.join(self._save_dir_path, f"PTHP_{self.num_iter}_results", f"dataset_{self.dataname}_graph_matrix.npy")
-                #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self.dataname}_graph_matrix.npy"
+                pa = os.path.join(self._save_dir_path, f"PTHP_{num_iter}_results", f"dataset_{self._dataname}_graph_matrix.npy")
+                #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self._dataname}_graph_matrix.npy"
                 tmp_mat = copy.deepcopy(edge_mat)
-                tmp_mat = Utils.filter(tmp_mat)
+                tmp_mat = Utils.filter(wait_to_filter_matrix=tmp_mat, prior_matrix=self._prior_matrix)
                 logging.info(f'tmp_edge_mat:{tmp_mat}')
                 np.save(pa, tmp_mat)
                 #logging.info(f"iter[{num_iter}]:saved--------")

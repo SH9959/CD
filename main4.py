@@ -171,7 +171,7 @@ def do_one_PTHP(task:int):
         'epsilon':1
     }
 
-    save_dir = "./PC_PTHP_923"
+    save_dir = ".\\PC_PTHP_923"
     Utils.check_path(save_dir)
 
     """

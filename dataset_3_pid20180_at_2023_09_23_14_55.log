@@ -1,8 +1,0 @@
-2023-09-23 14:55:58,893 - MainProcess - dataset_3-Processing_./datasets/dataset_3/alarm.csv in process 20180
-2023-09-23 14:55:58,894 - MainProcess - initial parameter of PTHP{'delta': 0.01, 'max_hop': 2, 'penalty': 'AIC', 'max_iter': 100, 'epsilon': 1}
-2023-09-23 14:55:58,894 - MainProcess - SAVE_DIRECTORY is in ./PTHP_920_boost_
-2023-09-23 14:55:58,895 - MainProcess - prior_file_path:./datasets/dataset_3/causal_prior.npy
-2023-09-23 14:55:58,895 - MainProcess - rca_file_path:./datasets/dataset_3/rca_prior.csv
-2023-09-23 14:55:58,895 - MainProcess - topology_file_path:./datasets/dataset_3/topology.npy
-2023-09-23 14:55:58,895 - MainProcess - limited_prior_file_path:./SUBMISSIONS/PC_submission/dataset_3_graph_matrix.npy
-2023-09-23 14:55:58,896 - MainProcess - now:2023_09_23_14_55
