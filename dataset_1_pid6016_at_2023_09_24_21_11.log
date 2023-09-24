@@ -8,3 +8,23 @@
 2023-09-24 21:11:33,771 - MainProcess - now:2023_09_24_21_11
 2023-09-24 21:13:11,485 - MainProcess - [iter 0]: likelihood_score = -1160733.2358743646
 2023-09-24 21:37:52,270 - MainProcess - [iter 1]: likelihood_score = -1153635.2562124808
+2023-09-24 22:04:39,132 - MainProcess - [iter 2]: likelihood_score = -1148538.846278706
+2023-09-24 22:04:39,142 - MainProcess - tmp_edge_mat:[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+2023-09-24 22:04:39,154 - MainProcess - iter[2]:saved-----------in---------------./causal_effect_PTHP_924------------------
+2023-09-24 22:30:45,129 - MainProcess - [iter 3]: likelihood_score = -1144277.0108566668
+2023-09-24 22:58:24,266 - MainProcess - [iter 4]: likelihood_score = -1140231.3835923732
+2023-09-24 22:58:24,276 - MainProcess - tmp_edge_mat:[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+2023-09-24 22:58:24,276 - MainProcess - iter[4]:saved-----------in---------------./causal_effect_PTHP_924------------------
+2023-09-24 23:27:02,389 - MainProcess - [iter 5]: likelihood_score = -1136560.0255721607
