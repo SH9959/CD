@@ -1,0 +1,9 @@
+2023-09-24 13:41:00,510 - MainProcess - dataset_1-Processing_./datasets/dataset_1/alarm.csv in process 5984
+2023-09-24 13:41:00,511 - MainProcess - initial parameter of PTHP{'delta': 0.01, 'max_hop': 2, 'penalty': 'AIC', 'max_iter': 100, 'epsilon': 1}
+2023-09-24 13:41:00,511 - MainProcess - SAVE_DIRECTORY is in ./causal_effect_PTHP_924
+2023-09-24 13:41:00,511 - MainProcess - prior_file_path:./datasets/dataset_1/causal_prior.npy
+2023-09-24 13:41:00,511 - MainProcess - rca_file_path:./datasets/dataset_1/rca_prior.csv
+2023-09-24 13:41:00,511 - MainProcess - topology_file_path:./datasets/dataset_1/topology.npy
+2023-09-24 13:41:00,511 - MainProcess - limited_prior_file_path:None
+2023-09-24 13:41:00,511 - MainProcess - now:2023_09_24_13_41
+2023-09-24 13:42:44,461 - MainProcess - [iter 0]: likelihood_score = -1160733.2358743646
