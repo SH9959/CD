@@ -7,3 +7,23 @@
 2023-09-24 15:32:31,635 - MainProcess - limited_prior_file_path:./SUBMISSIONS/causal_effect/threshold_0.10/bin_d1.npy
 2023-09-24 15:32:31,635 - MainProcess - now:2023_09_24_15_32
 2023-09-24 15:34:31,968 - MainProcess - [iter 0]: likelihood_score = -1160733.2358743646
+2023-09-24 16:26:17,636 - MainProcess - [iter 1]: likelihood_score = -1153635.2562124808
+2023-09-24 17:20:32,647 - MainProcess - [iter 2]: likelihood_score = -1148538.846278706
+2023-09-24 17:20:32,671 - MainProcess - tmp_edge_mat:[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+2023-09-24 17:20:32,692 - MainProcess - iter[2]:saved-----------in---------------./causal_effect_PTHP_924------------------
+2023-09-24 18:15:14,141 - MainProcess - [iter 3]: likelihood_score = -1144277.0108566668
+2023-09-24 19:50:25,188 - MainProcess - [iter 4]: likelihood_score = -1140231.3835923732
+2023-09-24 19:50:25,209 - MainProcess - tmp_edge_mat:[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+2023-09-24 19:50:25,219 - MainProcess - iter[4]:saved-----------in---------------./causal_effect_PTHP_924------------------

@@ -11,7 +11,7 @@ rca = [f'./datasets/dataset_{i}/rca_prior.csv' for i in range(1, 4)]
 topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
 rca.append(None)
 topo.append(None)
-pc_paths = [f'./SUBMISSIONS/causal_effect/threshold_0.10/bin_d{i}.npy' for i in range(1, 5)]
+pc_paths = [f'./SUBMISSIONS/causal_effect/threshold_0.15/bin_d{i}.npy' for i in range(1, 5)]
 
 def do_SAM():
 
