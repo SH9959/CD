@@ -333,6 +333,7 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
 
                 pa = os.path.join(self._save_dir_path, f"PTHP_{num_iter}_results", f"dataset_{self._dataname}_graph_matrix.npy")
                 #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self._dataname}_graph_matrix.npy"
+                Utils.check_path(pa)
                 tmp_mat = copy.deepcopy(edge_mat)
                 tmp_mat = Utils.filter(wait_to_filter_matrix=tmp_mat, prior_matrix=self._prior_matrix)
                 logging.info(f'tmp_edge_mat:{tmp_mat}')
