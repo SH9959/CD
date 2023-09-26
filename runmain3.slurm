@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH -J PTHP3                               # 作业名为 test
-#SBATCH -o PTHP3-%j.out                        # 屏幕上的输出文件重定向到 test.out
+#SBATCH -J PCTPTHP3                              # 作业名为 test
+#SBATCH -o PCTPTHP3-%j.out                        # 屏幕上的输出文件重定向到 test.out
 #SBATCH -p compute                            # 作业提交的分区为 compute
 #SBATCH -N 1                                  # 作业申请 1 个节点
 #SBATCH -t 6-23:59:59                           # 任务运行的最长时间为 1 小时
-#SBATCH -w gpu07                              # 指定运行作业的节点是 gpu06，若不填写系统自动分配节点
-#SBATCH --gres=gpu:geforce_rtx_2080_ti:1
-
+#SBATCH -w gpu07                             # 指定运行作业的节点是 gpu06，若不填写系统自动分配节点
+##SBATCH --gres=gpu:geforce_rtx_2080_ti:1
+##SBATCH --cpus-per-task=4
 # source ~/.bashrc
 
 # 设置运行环境
