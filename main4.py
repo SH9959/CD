@@ -12,7 +12,7 @@ topo = [f'./datasets/dataset_{i}/topology.npy' for i in range(1, 4)]
 rca.append(None)
 topo.append(None)
 pc_paths = [f'./PC_submission/pc_T_d{i}.npy' for i in range(1, 5)]
-SAVEPATH = "./PCT_PTHP_925"
+SAVEPATH = "./causal_effect_PTHP_924"
 def do_SAM():
 
     SAVE_PATH = [f'./SAM_submission/bin_form/dataset_{i}_graph_matrix.npy' for i in range(1, 5)]
