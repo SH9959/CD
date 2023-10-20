@@ -39,7 +39,8 @@ class CD():
         if self.prior_imformation_path is not None:
             self.prior_imformation = np.load(self.prior_imformation_path)
         else:
-            self.prior_imformation = None
+            self.prior_imformation = np.zeros(shape=(max(self.origin_data["alarm_id"].values)+1, max(self.origin_data["alarm_id"].values)+1))
+            self.prior_imformation.fill(-1)
 
         if self.topology_path is not None:
             self.topology = np.load(self.topology_path)
@@ -48,7 +49,12 @@ class CD():
             self.topology = np.zeros(shape=(max(self.origin_data["device_id"].values)+1, max(self.origin_data["device_id"].values)+1))
 
         if self.rca_prior_path is not None:
-            self.rca_prior = pd.read_csv(self.rca_prior_path)
+            try:
+                self.rca_prior = pd.read_csv(self.rca_prior_path)
+            except Exception as e:
+                print(f"Error loading RCA prior CSV: {str(e)}")
+                self.rca_prior = None
+                self.pthp_para['max_hop'] = 1
         else:
             self.rca_prior = None
             self.pthp_para['max_hop'] = 1
@@ -116,7 +122,7 @@ class CD():
         print(f"time: {t2-t1}s")
         return graph_matrix
     
-    def SAM(self,):  # 2022
+    def SAM(self, threshold=0.35):  # 2022
         """
         4个数据集都是300s左右
         """
@@ -149,7 +155,7 @@ class CD():
         B = time.time()
         print(f"time: {B-A}s")
 
-        threshold = 0.35  # 设置一个阈值
+        # threshold = 0.35  # 设置一个阈值
         binary_W_est = (a > threshold).astype(int)
         print("Binary W_est:\n", binary_W_est)
 
@@ -158,6 +164,46 @@ class CD():
         # nx.draw_networkx(pc_output)# , pos)  # draw
         # plp.show()
         return (binary_W_est, a)
+
+    def Notears(self, ):
+        from trustworthyAI.gcastle.castle.algorithms import notears
+        from trustworthyAI.gcastle.castle.common.priori_knowledge import PrioriKnowledge
+        """
+        PC方法需要git clone trustworthyAI库,记得改绝对路径,
+        dataset1: (2017,39) 8s
+        dataset2: (2016,49) 37s
+        dataset3: (2017,31) 3s
+        dataset4: (6582,30) 3000s
+        """
+        print(" ")
+        print("Notears is running")
+        t1 = time.time()
+
+        # causal_prior
+        causal_prior = deepcopy(self.prior_imformation)
+        alarms = deepcopy(self.origin_data)
+        print(f"shape of alarm data: {alarms.shape}")
+        print(f"shape of causal prior matrix: {causal_prior.shape}")
+        # Notes: topology.npy and rca_prior.csv are not used in this script.
+
+        samples = self.origin_data_to_X()
+
+        # create the prior knowledge object for the PC algorithm
+        prior_knowledge = PrioriKnowledge(causal_prior.shape[0])
+        for i, j in zip(*np.where(causal_prior == 1)):
+            prior_knowledge.add_required_edge(i, j)
+
+        for i, j in zip(*np.where(causal_prior == 0)):
+            prior_knowledge.add_forbidden_edge(i, j)
+
+        pc = notears(priori_knowledge=prior_knowledge)
+        pc.learn(samples)
+        graph_matrix = np.array(pc.causal_matrix)
+        print("graph_matrix.shape:", graph_matrix.shape)
+        t2 = time.time()
+
+        print(f"time: {t2 - t1}s")
+        return graph_matrix
 
     def NotearsNonlinear(self,): # 2018-
         from trustworthyAI.gcastle.castle.algorithms import NotearsNonlinear

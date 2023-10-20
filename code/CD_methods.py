@@ -39,7 +39,8 @@ class CD():
         if self.prior_imformation_path is not None:
             self.prior_imformation = np.load(self.prior_imformation_path)
         else:
-            self.prior_imformation = None
+            self.prior_imformation = np.zeros(shape=(max(self.origin_data["alarm_id"].values)+1, max(self.origin_data["alarm_id"].values)+1))
+            self.prior_imformation.fill(-1)
 
         if self.topology_path is not None:
             self.topology = np.load(self.topology_path)

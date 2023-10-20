@@ -1,0 +1,19 @@
+2023-10-17 19:28:26,339 - MainProcess - dataset_6-Processing_./datasets_phase2/dataset_6/alarm.csv in process 13088
+2023-10-17 19:28:26,341 - MainProcess - initial parameter of PTHP{'delta': 0.01, 'max_hop': 2, 'penalty': 'AIC', 'max_iter': 100, 'epsilon': 1}
+2023-10-17 19:28:26,342 - MainProcess - SAVE_DIRECTORY is in ./DAGMA_PTHP
+2023-10-17 19:28:26,344 - MainProcess - prior_file_path:./datasets_phase2/dataset_6/causal_prior.npy
+2023-10-17 19:28:26,344 - MainProcess - rca_file_path:./datasets_phase2/dataset_6/rca_prior.csv
+2023-10-17 19:28:26,344 - MainProcess - topology_file_path:./datasets_phase2/dataset_6/topology.npy
+2023-10-17 19:28:26,372 - MainProcess - limited_prior_file_path:./DAGMA/DAGMA_phase2/thres_0.05/dataset_6_graph_matrix.npy
+2023-10-17 19:28:26,373 - MainProcess - now:2023_10_17_19_28
+2023-10-17 19:29:56,709 - MainProcess - [iter 0]: likelihood_score = -3235672.7503137495
+2023-10-17 19:31:21,734 - MainProcess - [iter 1]: likelihood_score = -3230259.500602261
+2023-10-17 19:32:50,732 - MainProcess - [iter 2]: likelihood_score = -3230249.2470485005
+2023-10-17 19:32:50,734 - MainProcess - tmp_edge_mat:[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+2023-10-17 19:32:50,763 - MainProcess - iter[2]:saved-----------in---------------./DAGMA_PTHP------------------
