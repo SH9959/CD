@@ -1,0 +1,29 @@
+{
+    "datasets": [
+      "./datasets_phase2/dataset_4/alarm.csv",
+      "./datasets_phase2/dataset_5/alarm.csv",
+      "./datasets_phase2/dataset_6/alarm.csv"
+    ],
+    "pri": [
+      "./datasets_phase2/dataset_4/causal_prior.npy",
+      "./datasets_phase2/dataset_5/causal_prior.npy",
+      "./datasets_phase2/dataset_6/causal_prior.npy"
+    ],
+    "rca": [
+      null,
+      "./datasets_phase2/dataset_5/rca_prior.csv",
+      "./datasets_phase2/dataset_6/rca_prior.csv"
+    ],
+    "topo": [
+      null,
+      "./datasets_phase2/dataset_5/topology.npy",
+      null
+    ],
+    "init_paths": [
+      "./_init_matrices/dagma/init_4_graph.npy",
+      "./_init_matrices/causal_effect/init_5_graph.npy",
+      "./_init_matrices/PC/init_6_graph.npy"
+    ],
+    "SAVEPATH": "./FINAL_RESULTS/"
+  }
+  
