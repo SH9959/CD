@@ -7,3 +7,11 @@
 # 忽略.vscode文件夹下的所有文件
 /.vscode/*
 !.vscode/settings.json
+
+# 忽略.idea目录
+.idea/
+
+# 忽略__pycache__目录
+__pycache__/
+
+.gitignore
