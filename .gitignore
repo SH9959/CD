@@ -1,0 +1,9 @@
+# 忽略所有的日志文件
+*.log
+
+# 忽略build文件夹及其内容
+/build/
+
+# 忽略.vscode文件夹下的所有文件
+/.vscode/*
+!.vscode/settings.json
