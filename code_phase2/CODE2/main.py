@@ -81,7 +81,7 @@ def do_one_PTHP(task:int):
     para = {
         'delta':0.01, 
         'max_hop':2, 
-        'penalty':'BIC', 
+        'penalty':'AIC',
         'max_iter':100,
         'epsilon':1
     }
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     #do_NotearsNonlinear()
     #do_PTHP()
     # do_PTHP_MultiProcesses()
-    TASKs = [4, 5, 6]
+    TASKs = [5, 6]
     for TASK in TASKs:
         do_one_PTHP(TASK - 4)
     # 可以并行执行四个数据集

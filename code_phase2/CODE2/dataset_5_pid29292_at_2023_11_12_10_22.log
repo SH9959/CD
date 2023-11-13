@@ -1,0 +1,12 @@
+2023-11-12 10:22:12,921 - MainProcess - dataset_5-Processing_./datasets_phase2/dataset_5/alarm.csv in process 29292
+2023-11-12 10:22:12,921 - MainProcess - initial parameter of PTHP{'delta': 0.01, 'max_hop': 2, 'penalty': 'AIC', 'max_iter': 100, 'epsilon': 1}
+2023-11-12 10:22:12,922 - MainProcess - SAVE_DIRECTORY is in ./FINAL_RESULTS/
+2023-11-12 10:22:12,922 - MainProcess - prior_file_path:./datasets_phase2/dataset_5/causal_prior.npy
+2023-11-12 10:22:12,922 - MainProcess - rca_file_path:./datasets_phase2/dataset_5/rca_prior.csv
+2023-11-12 10:22:12,922 - MainProcess - topology_file_path:./datasets_phase2/dataset_5/topology.npy
+2023-11-12 10:22:12,922 - MainProcess - init_prior_file_path:./_init_matrices/causal_effect/init_5_graph.npy
+2023-11-12 10:22:12,922 - MainProcess - now:2023_11_12_10_22
+2023-11-12 10:24:37,986 - MainProcess - [iter 0]: likelihood_score = -2683195.040959137
+2023-11-12 10:24:37,986 - MainProcess - ---------------------Release stage-------------------
+2023-11-12 10:42:19,472 - MainProcess - [iter 1]: likelihood_score = -2669566.242980556
+2023-11-12 10:42:19,472 - MainProcess - ---------------------Release stage-------------------

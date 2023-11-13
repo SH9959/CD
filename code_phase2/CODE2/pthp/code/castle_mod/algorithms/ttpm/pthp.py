@@ -325,13 +325,17 @@ class PTHP(BaseLearner):  # 添加了一个数据集的名字参数，用来保�
         result = self._em(edge_mat)
         l_ret = result[0]
         BEST_ITERATIONS = [2, 56, 6]
-        
+        import time
+        st = time.time()
         for num_iter in range(self._max_iter):
-            
+            et = time.time()
             logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
             if RELEASE == True:
                 logging.info("---------------------Release stage-------------------")
-                if num_iter == BEST_ITERATIONS[self._dataname - 4]:
+
+                t = (et - st) / 3600
+                print(f"running time:{(et - st) / 3600}h")
+                if num_iter == BEST_ITERATIONS[self._dataname - 4] or t >= 12.5:  # 超时自动保存
                     
                     pa = os.path.join(self._save_dir_path, f"submission_results", f"dataset_{self._dataname}_graph_matrix.npy")
                     #pa = f"./PTHPs_results_with_PC_918/PTHP_{num_iter}_results/dataset_{self._dataname}_graph_matrix.npy"
